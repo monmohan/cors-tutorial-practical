@@ -1,0 +1,41 @@
+<html>
+
+<head>A basic CORS experiment
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+</head>
+
+<body>
+    <p>
+        <div id="wrapper">
+           Enter user name: <input type="text" id="user" />
+            <input type="button" id="bshow" value="Show" />
+            <div id="response"></div>
+        </div>
+
+    </p>
+    <script type="text/javascript">
+    (function($) {
+        $('#bshow').bind('click', function() {
+            console.log($('#user').attr('value'))
+            sendRequest("http://localhost:12346/users/"+$('#user').attr('value'))
+        });
+
+    })(jQuery);
+
+    function reqListener() {
+        var t=this
+        $('#response').append(t.responseText);
+    }
+
+    function sendRequest(url) {
+        var oReq = new XMLHttpRequest();
+        oReq.addEventListener("load", reqListener);
+        oReq.withCredentials = true;
+        oReq.open("GET", url);
+        oReq.send();
+    }
+    
+    </script>
+</body>
+
+</html>

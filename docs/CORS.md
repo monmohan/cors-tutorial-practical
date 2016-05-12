@@ -6,13 +6,13 @@ But, in order to understand cross origin resoure sharing, first we need to under
 ###What is an Origin?
 Two pages have the same origin if the protocol, port (if one is specified), and host are the same for both pages. 
 So 
-http://api.autodesk.com/resource.html
+- http://api.autodesk.com/resource.html
 has same origin as
-http://api.autodesk.com/somepath/resource2.html
+- http://api.autodesk.com/somepath/resource2.html
 but different from 
-http://api.autodesk.com:99/resource.html (different port)
+- http://api.autodesk.com:99/resource.html (different port)
 or
-https://api.autodesk.com:99/resource.html (different protocol)
+- https://api.autodesk.com:99/resource.html (different protocol)
 There are some exeptions to the above rule (mostly by, suprise surprise IE !) but they are non-standard.
 
 ###Same Origin Policy
@@ -23,59 +23,63 @@ In this blog we will focus on the main restriction, cross origin requests using 
 ### Enter CORS
 The Cross-Origin Resource Sharing standard (https://www.w3.org/TR/cors/) works by adding new HTTP headers that allow servers to describe the set of origins that are permitted to read that information using a web browser. Important thing to note is that its the Servers which are in control, not the client.
 
-Code Samples 
+### Code Samples 
 All the code shown in the blog is available at [LINK]
 The server code is written in golang and the client samples use XMLHttpRequest Object (javascript/html). Although the code is in golang, the reader doesn't require knowledge of the language to understand what's going on. Its fairly obvious.
 You can either build the code from source (See Readme) or download the binaries from here(OS X only) [LINK]. If you are interested to give it a spin, and would like to get binaries for any other platform feel free to reach out to me 
 
-Example 1
+==Example 1
 So lets first see what happens when we do a cross origin XMLHttpRequest. For this example, we will be running two servers.
-PageServer : A simple server which serves requested page. This server runs on a given port and serves an HTML file
 
-> var port = flag.Int("port", 10001, "port to listen on")
+PageServer : A simple server which serves requested page. 
+	This server runs on a given port and serves an HTML file
 
->func fileHandler(w http.ResponseWriter, r *http.Request) {
->    fmt.Printf("Requested URL %v\n", r.URL.Path)
->    http.ServeFile(w, r, r.URL.Path[1:])
->}
+    var port = flag.Int("port", 10001, "help message for flagname")
 
->func main() {
->    flag.Parse()
->    http.HandleFunc("/", fileHandler)
->    log.Fatal(http.ListenAndServe(fmt.Sprintf("localhost:%d", *port), nil))
->}
+    func fileHandler(w http.ResponseWriter, r *http.Request) {
+      fmt.Printf("Requested URL %v\n", r.URL.Path)
+      http.ServeFile(w, r, r.URL.Path[1:])
+    }
 
-Start the pageserver on port 12345
+    func main() {
+      flag.Parse()
+      http.HandleFunc("/", fileHandler)
+      log.Fatal(http.ListenAndServe(fmt.Sprintf("localhost:%d", *port), nil))
+    }
+
+- Start the pageserver on port 12345
+
 > $pagesever -port 12345
  
-Apiserver : This is a simple server that looks up a user sent in the URL request and returns JSON data 
+ Apiserver : This is a simple server that looks up a user sent in the URL request and returns JSON data 
 
-> var userData = map[string]User{
-   "john": User{"jdoe", "John", "Doe", "France"},
- }
- var port = flag.Int("port", 10001, "port to listen on")
- 
- >func userHandler(w http.ResponseWriter, r *http.Request) {
-   w.Header().Set("Content-Type", "application/json")
-   b, _ := json.Marshal(userData[r.URL.Path[len("/users/"):]])
-   io.WriteString(w, string(b))
- 
- >}
- 
- >func main() {
-   flag.Parse()
-   http.HandleFunc("/users/", userHandler)
-   log.Fatal(http.ListenAndServe(fmt.Sprintf("localhost:%d", *port), nil))
- }
+    var userData = map[string]User{
+      "john": User{"jdoe", "John", "Doe", "France"},
+    }
+    var port = flag.Int("port", 10001, "help message for flagname")
 
+    func userHandler(w http.ResponseWriter, r *http.Request) {
+      w.Header().Set("Content-Type", "application/json")
+      b, _ := json.Marshal(userData[r.URL.Path[len("/users/"):]])
+      io.WriteString(w, string(b))
+
+    }
+
+    func main() {
+      flag.Parse()
+      http.HandleFunc("/users/", userHandler)
+      log.Fatal(http.ListenAndServe(fmt.Sprintf("localhost:%d", *port), nil))
+    }  
+  
 Run the apiserver
+
 >$ apiserver -port 12346
 
-Open the browser and load the html http://localhost:12345/showuser.html
-Here is how this looks
-![ShowUser](/path/to/img.jpg)
+- Open the browser and load the html http://localhost:12345/showuser.html
+  Here is how this looks
+![ShowUser](https://raw.githubusercontent.com/monmohan/cors-experiment/master/docs/showuser.png)
 
-if you click "show", it is supposed to go to http://localhost:12346/users/john and get the user json to display but instead you see this error in console
+if you click "show", it is supposed to go to http://localhost:12346/users/john and get the user json to display but instead you see this error in console :
 
 >showuser.html:1 XMLHttpRequest cannot load http://localhost:12346/users/john. No 'Access-Control-Allow-Origin' header is present on the requested resource. Origin 'http://localhost:12345' is therefore not allowed access.
 
@@ -94,24 +98,26 @@ HTTP Headers matches one or more of these
 Lets see what we can do to succeed in serving a simple cross origin request
 
 - Stop the apiserver 
-- Start the apiserver_allow_origin server. 
+- Start the apiserver\_allow\_origin server. 
 
-> $ apiserver_allow_origin -port 12346
+> $ apiserver\_allow\_origin -port 12346
 
 What we have done here is added the _Access-Control-Allow-Origin_ header for any incoming GET request. The value of the header is same as the value sent by browser for the Origin header in the request. This is equivalent to allowing requests that come from any origin (*)
 
->func corsWrapper(fn func(http.ResponseWriter, *http.Request)) httpHandlerFunc {
->    return func(w http.ResponseWriter, r *http.Request) {
->        origin := r.Header.Get("Origin")
->        fmt.Printf("Request Origin header %s\n", origin)
->        if origin != "" {
->            w.Header().Set("Access-Control-Allow-Origin", origin)
->        }
->        fn(w, r)
->    }
-}
+    func corsWrapper(fn func(http.ResponseWriter, *http.Request)) httpHandlerFunc {
+        return func(w http.ResponseWriter, r *http.Request) {
+            origin := r.Header.Get("Origin")
+            fmt.Printf("Request Origin header %s\n", origin)
+            if origin != "" {
+                w.Header().Set("Access-Control-Allow-Origin", origin)
+            }
+            fn(w, r)
+        }
+    }
+
 
 Lets attempt clicking the "show" button again and Voila we see the data returned by the server:
+
 > {"UserName":"jdoe","FirstName":"John","LastName":"Doe","Country":"France"}
 
 Its all good until we realize that just adding Access-Control-Allow-Origin isn't sufficient for certain "complex" requests (or anything which isn't covered in the Simple request). 

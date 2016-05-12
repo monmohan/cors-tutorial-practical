@@ -266,11 +266,11 @@ Hopefully this has given a hands on experience with supporting CORS.
 To read more on this subject, please take a look at the links in the reference section.
 
 References
-- Browser Security Handbook
-https://code.google.com/archive/p/browsersec/wikis/Part2.wiki#Same-origin_policy
-- W3C Cross-Origin Resource Sharing
-https://www.w3.org/TR/cors/
-HTML5 Rocks
-CORS on MDN
-https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS
-http://www.html5rocks.com/en/tutorials/cors/#toc-introduction
+- [Browser Security Handbook]
+(https://code.google.com/archive/p/browsersec/wikis/Part2.wiki#Same-origin_policy)
+- [W3C Cross-Origin Resource Sharing]
+(https://www.w3.org/TR/cors/)
+- [HTML5 Rocks]
+(http://www.html5rocks.com/en/tutorials/cors/#toc-introduction)
+- [CORS on MDN]
+(https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS)

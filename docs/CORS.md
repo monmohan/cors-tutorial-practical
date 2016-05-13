@@ -9,7 +9,7 @@ You can run the servers locally by following instructions in the [Readme](https:
 ###Cross-Origin Resource Sharing (CORS)
  is a W3C spec that allows cross-domain communication from the browser. CORS is becoming increasingly more important as we use multiple API's and services to create a mashup/stitched user experience
 
-But, in order to understand cross origin resoure sharing, first we need to understand the concept of an "origin".
+But, in order to understand cross origin resource sharing, first we need to understand the concept of an "origin".
 
 ###What is an Origin?
 Two pages have the same origin if the protocol, port (if one is specified), and host are the same for both pages. 
@@ -24,7 +24,7 @@ So
 There are some exceptions to the above rule (mostly by, suprise surprise IE !) but they are non-standard.
 
 ###Same Origin Policy
-By default, Browsers enforce "Same Origin Policy" for HTTP requests initiated from within scripts. A web application using XMLHttpRequest could only make HTTP requests to its own domain. One important thing to be aware of, is that, cross orgin "embedding" is allowed. Browsers can load scripts(source),images, media files embedded within the page even if they are from a different origin.
+By default, Browsers enforce "Same Origin Policy" for HTTP requests initiated from within scripts. A web application using XMLHttpRequest could only make HTTP requests to its own domain. One important thing to be aware of, is that, cross origin "embedding" is allowed. Browsers can load scripts(source),images, media files embedded within the page even if they are from a different origin.
 
 In this blog we will focus on the main restriction, cross origin requests using XMLHttpRequest
 
@@ -202,7 +202,7 @@ What we have done here is added some code in the apiserver to respond to OPTIONS
 
 
 
-Enter data and hit "create" button again. You will see that the request succeeeded. Using chrome tools or similar debugger, the response to OPTIONS request can be examined as well. 
+Enter data and hit "create" button again. You will see that the request succeeded. Using chrome tools or similar debugger, the response to OPTIONS request can be examined as well. 
 
 >HTTP/1.1 200 OK
 *Access-Control-Allow-Headers: Content-Type*
@@ -292,11 +292,7 @@ Hopefully this has given a hands on experience with supporting CORS.
 There are few more optional headers supported by CORS, to read more about the subject, please take a look at the links in the reference section.
 
 References
-- [Browser Security Handbook]
-(https://code.google.com/archive/p/browsersec/wikis/Part2.wiki#Same-origin_policy)
-- [W3C Cross-Origin Resource Sharing]
-(https://www.w3.org/TR/cors/)
-- [HTML5 Rocks]
-(http://www.html5rocks.com/en/tutorials/cors/#toc-introduction)
-- [CORS on MDN]
-(https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS)
+- [Browser Security Handbook](https://code.google.com/archive/p/browsersec/wikis/Part2.wiki#Same-origin_policy)
+- [W3C Cross-Origin Resource Sharing](https://www.w3.org/TR/cors/)
+- [HTML5 Rocks](http://www.html5rocks.com/en/tutorials/cors/#toc-introduction)
+- [CORS on MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS)

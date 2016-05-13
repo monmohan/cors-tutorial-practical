@@ -5,13 +5,14 @@
 
 # Running the demo
 * Download and install [golang[ (https://golang.org/dl/)
-* Download the release binaries
-OR
 * Clone the repo
     `git clone git@github.com:monmohan/cors-experiment.git`
-* Build the binares
-* PageServers
- * cd to cors-expriment/pageserver directory
- * go build pageserver.go
- * go build pageserver_cookie.go
- * 
+* Running the Servers
+    + The servers can be run directly from the source
+    + Change to the relevent directory
+    + Type `go run <filename>`
+- For example to run the apiserver_preflight, 
+    + cd to apiserver directory
+    + go run apiserver_preflight.go
+
+Follow CORS.MD to try out the examples in the blog article

@@ -11,6 +11,7 @@ var port = flag.Int("port", 10001, "help message for flagname")
 
 func fileHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("Requested URL %v\n", r.URL.Path)
+	http.SetCookie(w, &http.Cookie{Name: "token", Value: "secret_token"})
 	http.ServeFile(w, r, r.URL.Path[1:])
 }
 

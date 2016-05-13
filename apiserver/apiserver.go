@@ -19,7 +19,7 @@ type User struct {
 var userData = map[string]User{
 	"john": User{"jdoe", "John", "Doe", "France"},
 }
-var port = flag.Int("port", 10001, "help message for flagname")
+var port = flag.Int("port", 12346, "port to listen on, default is 12346")
 
 func userHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")

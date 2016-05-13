@@ -13,6 +13,6 @@
     + Type `go run <filename>`
 - For example to run the apiserver_preflight, 
     + cd to apiserver directory
-    + go run apiserver_preflight.go
+    + `go run apiserver_preflight.go`
 
 Follow CORS.MD to try out the examples in the blog article

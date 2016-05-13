@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strings"
 )
 
 type User struct {
@@ -35,9 +36,10 @@ func corsWrapper(fn func(http.ResponseWriter, *http.Request)) http.HandlerFunc {
 
 func optionsWrapper(fn func(http.ResponseWriter, *http.Request)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == "OPTIONS" {
-			//set other headers
-			w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+		reqMethod, reqHeader := r.Header.Get("Access-Control-Request-Method"), r.Header.Get("Access-Control-Request-Headers")
+		//check for validity
+		if (r.Method == "OPTIONS") && (reqMethod == "GET" || reqMethod == "POST") && (strings.EqualFold(reqHeader, "Content-Type")) {
+			w.Header().Set("Access-Control-Allow-Methods", "POST, GET")
 			w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 			return
 		}
@@ -54,6 +56,7 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func createUserHandler(w http.ResponseWriter, r *http.Request) {
+	//post only
 	if r.Method != "POST" {
 		return
 	}

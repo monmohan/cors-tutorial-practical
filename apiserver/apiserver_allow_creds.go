@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strings"
 )
 
 type User struct {
@@ -28,14 +29,22 @@ func corsWrapper(fn func(http.ResponseWriter, *http.Request)) http.HandlerFunc {
 		fmt.Printf("Request Origin header %s\n", origin)
 		if origin != "" {
 			w.Header().Set("Access-Control-Allow-Origin", origin)
+			w.Header().Set("Access-Control-Allow-Credentials", "true")
 		}
 		fn(w, r)
 	}
 }
 
-func credsWrapper(fn func(http.ResponseWriter, *http.Request)) http.HandlerFunc {
+func optionsWrapper(fn func(http.ResponseWriter, *http.Request)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Credentials", "true")
+		reqMethod, reqHeader := r.Header.Get("Access-Control-Request-Method"), r.Header.Get("Access-Control-Request-Headers")
+		//check for validity
+		if (r.Method == "OPTIONS") && (reqMethod == "GET" || reqMethod == "POST") && (strings.EqualFold(reqHeader, "Content-Type")) {
+			w.Header().Set("Access-Control-Allow-Methods", "POST, GET")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+			return
+		}
+
 		fn(w, r)
 	}
 }
@@ -53,6 +62,6 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	flag.Parse()
-	http.HandleFunc("/users/", corsWrapper(credsWrapper(userHandler)))
+	http.HandleFunc("/users/", corsWrapper(optionsWrapper(userHandler)))
 	log.Fatal(http.ListenAndServe(fmt.Sprintf("localhost:%d", *port), nil))
 }

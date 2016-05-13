@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strings"
 )
 
 type User struct {
@@ -32,6 +33,20 @@ func corsWrapper(fn func(http.ResponseWriter, *http.Request)) http.HandlerFunc {
 		fn(w, r)
 	}
 }
+func optionsWrapper(fn func(http.ResponseWriter, *http.Request)) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		reqMethod, reqHeader := r.Header.Get("Access-Control-Request-Method"), r.Header.Get("Access-Control-Request-Headers")
+		//check for validity
+		if (r.Method == "OPTIONS") && (reqMethod == "GET" || reqMethod == "POST") && (strings.EqualFold(reqHeader, "Content-Type")) {
+			w.Header().Set("Access-Control-Allow-Methods", "POST, GET")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+			return
+		}
+
+		fn(w, r)
+	}
+}
+
 func userHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	b, _ := json.Marshal(userData[r.URL.Path[len("/users/"):]])
@@ -45,6 +60,6 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	flag.Parse()
-	http.HandleFunc("/users/", corsWrapper(userHandler))
+	http.HandleFunc("/users/", corsWrapper(optionsWrapper(userHandler)))
 	log.Fatal(http.ListenAndServe(fmt.Sprintf("localhost:%d", *port), nil))
 }

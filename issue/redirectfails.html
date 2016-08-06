@@ -1,0 +1,50 @@
+<html>
+
+<head>A basic CORS experiment
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+</head>
+
+<body>
+    <p>
+        <div id="wrapper">
+            <input type="button" id="bpass" value="Direct CORS Request Pass" />
+            <input type="button" id="bfail" value="CORS Request With Redirect 303 Fails" />
+           
+        </div>
+        <p>
+            <div id="status"></div> 
+        
+        </p>
+    </p>
+    <script type="text/javascript">
+    (function($) {
+        $('#bpass').bind('click', function() {
+            sendRequest("http://localhost:12346/users/john",$('#status'));
+        });
+        $('#bfail').bind('click', function() {
+            sendRequest("http://localhost:12346/users/@me",$('#status'))});
+
+    })(jQuery);
+
+    
+    function sendRequest(url, showStats) {
+        $('#status').empty()
+        $('#status').append("Sending request.... : "+url)
+        var reqListener=function(){
+                var t=this
+                 $('#status').append("<br>Got response.... <br>")
+                showStats.append(t.responseText);  
+        };
+            
+        var oReq = new XMLHttpRequest();
+        oReq.addEventListener("load", reqListener);
+
+        oReq.open("GET", url);
+        oReq.setRequestHeader("x-custom-header","some custom header value")
+        oReq.send();
+    }
+    
+    </script>
+</body>
+
+</html>

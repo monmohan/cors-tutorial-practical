@@ -1,0 +1,2 @@
+This scenario fails for GET requests that require pre-flight check.
+XMLHttpRequest cannot load http://localhost:12346/users/@me. The request was redirected to 'http://localhost:12346/users/john', which is disallowed for cross-origin requests that require preflight.

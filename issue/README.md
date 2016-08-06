@@ -1,4 +1,4 @@
-### Reproduce browsers failur to follow redirects in case of Pre-flighted CORS requests
+### Reproduce browsers failure to follow redirects in case of Pre-flighted CORS requests
 
 # Running the repro servers
 * Download and install [golang[ (https://golang.org/dl/)

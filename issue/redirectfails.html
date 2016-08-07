@@ -7,8 +7,8 @@
 <body>
     <p>
         <div id="wrapper">
-            <input type="button" id="bpass" value="Direct CORS Request Pass" />
-            <input type="button" id="bfail" value="CORS Request With Redirect 303 Fails" />
+            <input type="button" id="bfail" value="CORS With Redirect 303  (W Preflight) Fails" />
+             <input type="button" id="bpass" value="CORS With Simple Redirect 303 Pass" />
            
         </div>
         <p>
@@ -19,15 +19,15 @@
     <script type="text/javascript">
     (function($) {
         $('#bpass').bind('click', function() {
-            sendRequest("http://localhost:12346/users/john",$('#status'));
+            sendRequest("http://localhost:12346/users/@me",$('#status'),false);
         });
         $('#bfail').bind('click', function() {
-            sendRequest("http://localhost:12346/users/@me",$('#status'))});
+            sendRequest("http://localhost:12346/users/@me",$('#status'),true)});
 
     })(jQuery);
 
     
-    function sendRequest(url, showStats) {
+    function sendRequest(url, showStats, addCustomHeader) {
         $('#status').empty()
         $('#status').append("Sending request.... : "+url)
         var reqListener=function(){
@@ -40,7 +40,9 @@
         oReq.addEventListener("load", reqListener);
 
         oReq.open("GET", url);
-        oReq.setRequestHeader("x-custom-header","some custom header value")
+        if(addCustomHeader){
+           oReq.setRequestHeader("x-custom-header","some custom header value")
+        }
         oReq.send();
     }
     

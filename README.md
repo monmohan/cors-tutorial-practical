@@ -6,7 +6,7 @@
 # Running the demo
 * Download and install [golang[ (https://golang.org/dl/)
 * Clone the repo
-    `git clone git@github.com:monmohan/cors-experiment.git`
+    `git clone git@github.com:monmohan/cors-tutorial-practical.git`
 * Running the Servers
     + The servers can be run directly from the source
     + Change to the relevent directory

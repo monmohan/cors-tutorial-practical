@@ -6,12 +6,12 @@ All the code shown in the blog is available at https://github.com/monmohan/cors-
 The server code is written in golang and the client samples are web pages that use javascript [XMLHttpRequest Object](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest) . Although the code is in golang, the reader doesn't require knowledge of the language to understand what's going on. Its fairly obvious.
 You can run the servers locally by following instructions in the [Readme](https://github.com/monmohan/cors-experiment/blob/master/README.md)
 
-###Cross-Origin Resource Sharing (CORS)
+### Cross-Origin Resource Sharing (CORS)
  is a W3C spec that allows cross-domain communication from the browser. CORS is becoming increasingly more important as we use multiple API's and services to create a mashup/stitched user experience
 
 But, in order to understand cross origin resource sharing, first we need to understand the concept of an "origin".
 
-###What is an Origin?
+### What is an Origin?
 Two pages have the same origin if the protocol, port (if one is specified), and host are the same for both pages. 
 So 
     * http://api.mysite.com/resource.html

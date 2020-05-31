@@ -43,5 +43,5 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	flag.Parse()
 	http.HandleFunc("/users/", corsWrapper(userHandler))
-	log.Fatal(http.ListenAndServe(fmt.Sprintf("localhost:%d", *port), nil))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf("127.0.0.3:%d", *port), nil))
 }

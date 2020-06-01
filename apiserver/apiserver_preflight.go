@@ -61,10 +61,19 @@ func createUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var nUser User
-	if e := json.NewDecoder(r.Body).Decode(&nUser); e == nil {
-		log.Printf("User created %v", nUser)
+	var e error
+	if e = json.NewDecoder(r.Body).Decode(&nUser); e == nil {
+		fmt.Printf("User created %v\n", nUser)
+		//save user
 		userData[nUser.UserName] = nUser
+		//write response
+		w.Header().Set("Content-Type", "application/json")
+		b, _ := json.Marshal(userData[nUser.UserName])
+		io.WriteString(w, string(b))
+		return
 	}
+	w.WriteHeader(http.StatusBadRequest)
+	fmt.Printf("Error in creating user %v", e.Error())
 
 }
 
@@ -72,5 +81,5 @@ func main() {
 	flag.Parse()
 	http.HandleFunc("/users/", corsWrapper(userHandler))
 	http.HandleFunc("/users", corsWrapper(optionsWrapper(createUserHandler)))
-	log.Fatal(http.ListenAndServe(fmt.Sprintf("localhost:%d", *port), nil))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf("apiserver.cors.com:%d", *port), nil))
 }

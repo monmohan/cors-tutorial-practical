@@ -1,60 +1,55 @@
 <html>
 
 <head>A basic CORS experiment
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+
 </head>
 
 <body>
     <p>
-        <div id="wrapper">
-            <form method="POST" id="fcreate">
-                <label> User Name: </label>
-                <input type="text" name="UserName" id="iuname">
-                <label>First Name:</label>
-                <input type="text" name="FirstName" id="ifname">
-                <label>Last Name:</label>
-                <input type="text" name="LastName" id="ilname">
-                <label> Country: </label>
-                <input type="text" name="Country" id="icountry">
-            </form>
-            <div>
-                <input type="button" id="bcreate" value="Create">
-            </div>
-            <div id="response"></div>
-        </div>
+    <div id="wrapper">
+        <form method="POST" id="fcreate">
+            <label> User Name: </label>
+            <input type="text" name="UserName" id="iuname">
+            <label>First Name:</label>
+            <input type="text" name="FirstName" id="ifname">
+            <label>Last Name:</label>
+            <input type="text" name="LastName" id="ilname">
+            <label> Country: </label>
+            <input type="text" name="Country" id="icountry">
+            <input type="submit" value="Submit">
+        </form>
+    </div>
     </p>
+    <p><div id="response"></div></p>
+        
+   
     <script type="text/javascript">
-    (function($) {
-        $('#bcreate').bind('click', function() {
-            console.log($('#user').attr('value'))
-            sendRequest("http://localhost:12346/users")
-        });
 
-    })(jQuery);
+        const handleFormSubmit = event => {
+            event.preventDefault();
+            var form = document.getElementById('fcreate')
+            var user = formToJSON(form.elements);
+            fetch('http://apiserver.cors.com:12346/users', {
+                method: 'post',
+                body: JSON.stringify(user),
+                headers: {
+                    "Content-type": "application/json"
+                },
 
-    function reqListener() {
-        var t = this
-        $('#response').append(t.responseText);
-    }
+            }).then(function (response) {
+                return response.json();
+            }).then(function (data) {
+                console.log('created > '+JSON.stringify(data))
+                document.getElementById("response").innerHTML = JSON.stringify(data) +' Created !';
+            });
+        };
+        const formToJSON = elements => [].reduce.call(elements, (data, element) => {
+            data[element.name] = element.value;
+            return data;
+        }, {});
 
-    function sendRequest(url) {
-        var oReq = new XMLHttpRequest();
-        oReq.addEventListener("load", reqListener);
-        oReq.open("POST", url);
-        oReq.setRequestHeader("Content-Type", "application/json")
-        var data = serializeUser($('#fcreate').serializeArray());
-        console.log(data)
-        oReq.send(JSON.stringify(data));
-    }
+        document.getElementById('fcreate').addEventListener('submit', handleFormSubmit);
 
-    function serializeUser(arr) {
-        var user = {};
-        $.each(arr, function() {
-            user[this.name] = this.value || '';
-        });
-        return user;
-
-    }
     </script>
 </body>
 

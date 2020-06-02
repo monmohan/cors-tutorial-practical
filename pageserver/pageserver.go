@@ -13,7 +13,7 @@ var setCookie = flag.Bool("set-cookie", false, "enable to set cookie in response
 func fileHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("Requested URL %v\n", r.URL.Path)
 	if *setCookie {
-		http.SetCookie(w, &http.Cookie{Name: "token", Value: "secret_token"})
+		http.SetCookie(w, &http.Cookie{Name: "token", Value: "secret_token", Domain: "cors.com"})
 	}
 	http.ServeFile(w, r, r.URL.Path[1:])
 }

@@ -15,13 +15,15 @@ type User struct {
 	FirstName string
 	LastName  string
 	Country   string
+	Secret    string ",omitempty"
 }
 
 var userData = map[string]User{
-	"john": User{"jdoe", "John", "Doe", "France"},
+	"john": {UserName: "jdoe", FirstName: "John", LastName: "Doe", Country: "France"},
 }
 
 var port = flag.Int("port", 12346, "port to listen on, default is 12346")
+var allowCreds = flag.Bool("allow-cred", false, "enable to set Access-Control-Allow-Credentials")
 
 func corsWrapper(fn func(http.ResponseWriter, *http.Request)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -29,7 +31,10 @@ func corsWrapper(fn func(http.ResponseWriter, *http.Request)) http.HandlerFunc {
 		fmt.Printf("Request Origin header %s\n", origin)
 		if origin != "" {
 			w.Header().Set("Access-Control-Allow-Origin", origin)
-			w.Header().Set("Access-Control-Allow-Credentials", "true")
+			if *allowCreds {
+				w.Header().Set("Access-Control-Allow-Credentials", "true")
+			}
+
 		}
 		fn(w, r)
 	}
@@ -51,17 +56,17 @@ func optionsWrapper(fn func(http.ResponseWriter, *http.Request)) http.HandlerFun
 
 func userHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	b, _ := json.Marshal(userData[r.URL.Path[len("/users/"):]])
-	io.WriteString(w, string(b))
-
+	user := userData[r.URL.Path[len("/users/"):]]
 	if c, err := r.Cookie("token"); err == nil && c.Value == "secret_token" {
-		io.WriteString(w, "<br/>Show Secret Data !!")
+		user.Secret = "This is a user secret only shown when cookie is present"
 	}
+	b, _ := json.Marshal(user)
+	io.WriteString(w, string(b))
 
 }
 
 func main() {
 	flag.Parse()
 	http.HandleFunc("/users/", corsWrapper(optionsWrapper(userHandler)))
-	log.Fatal(http.ListenAndServe(fmt.Sprintf("localhost:%d", *port), nil))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf("apiserver.cors.com:%d", *port), nil))
 }

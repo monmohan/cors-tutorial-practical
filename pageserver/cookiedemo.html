@@ -1,0 +1,75 @@
+<html>
+
+<head>A basic CORS experiment
+    <script type="text/javascript">
+        function getUser(sameSite) {
+            let url = sameSite?"http://apiserver.cors.com:12346/users/john":"http://apiserver.sscors.com:12346/users/john";
+            sendRequest(url, sameSite?"ss-response-1":"cs-response-1", "GET")
+
+        }
+
+        function VisitMe(sameSite) {
+            let url = sameSite?"http://apiserver.cors.com:12346/users/@me":"http://apiserver.sscors.com:12346/users/@me";
+            sendRequest(url, sameSite?"ss-response-2":"cs-response-2", "GET")
+
+        }
+        
+        function sendRequest(url, respDiv, httpMethod) {
+            fetch(url,
+                {
+                    credentials: 'include',
+                    method: httpMethod,
+                }).then(function (response) {
+                    return response.text().then(function (text) {
+                        document.getElementById(respDiv).innerHTML = text;
+                    });
+                });
+        }
+    </script>
+</head>
+
+<body>
+
+    <p>
+        <h2> -- SAME SITE DEMO---</h2>
+        <h3>This connects to apiserver.cors.com, cross origin but same site</h3>
+    <div id="wrapper1">
+        Hit the Button to Set "visited-userid" to "jhon" :
+        <input type="button" id="bshow" value="Set Cookie Via AjaX" onclick="getUser('1')" />
+        <div id="ss-response-1"></div>
+    </div>
+
+    </p>
+
+    <p>
+    <div id="wrapper2">
+        Hit the Button to return the data from earlier cookie using HTTP GET- "@me":
+        <input type="button" id="bshow2" value="Use Cookie Set Earlier" onclick="VisitMe('1')" />
+        <div id="ss-response-2"></div>
+    </div>
+
+    </p>
+
+    <p>
+        <h2> -- CROSS SITE DEMO---</h2>
+        <h3>This connects to apiserver.sscors.com, cross origin and cross site</h3>
+    <div id="wrapper3">
+        Hit the Button to Set "visited-userid" to "john" :
+        <input type="button" id="bshow3" value="Set Cookie Via Ajax Fetch" onclick="getUser()" />
+        <div id="cs-response-1"></div>
+    </div>
+
+    </p>
+
+    <p>
+    <div id="wrapper4">
+        Hit the Button to return the data from earlier cookie using HTTP GET- "@me":
+        <input type="button" id="bshow4" value="Use Cookie Set Earlier " onclick="VisitMe()" />
+        <div id="cs-response-2"></div>
+    </div>
+
+    </p>
+    
+</body>
+
+</html>

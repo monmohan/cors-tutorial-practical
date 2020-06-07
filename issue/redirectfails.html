@@ -19,10 +19,10 @@
     <script type="text/javascript">
     (function($) {
         $('#bpass').bind('click', function() {
-            sendRequest("http://localhost:12346/users/@me",$('#status'),false);
+            sendRequest("http://apiserver.cors.com:12346/users/@me",$('#status'),false);
         });
         $('#bfail').bind('click', function() {
-            sendRequest("http://localhost:12346/users/@me",$('#status'),true)});
+            sendRequest("http://apiserver.cors.com:12346/users/@me",$('#status'),true)});
 
     })(jQuery);
 

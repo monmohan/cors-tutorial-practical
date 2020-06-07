@@ -17,5 +17,5 @@ func fileHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	flag.Parse()
 	http.HandleFunc("/", fileHandler)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf("localhost:%d", *port), nil))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf("pageserver.cors.com:%d", *port), nil))
 }

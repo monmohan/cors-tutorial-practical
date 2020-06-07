@@ -42,7 +42,7 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
 	uname := r.URL.Path[len("/users/"):]
 	w.Header().Set("Content-Type", "application/json")
 	if uname == "@me" {
-		location := fmt.Sprintf("http://localhost:%d/users/john", *port)
+		location := fmt.Sprintf("http://apiserver.cors.com:%d/users/john", *port)
 		w.Header().Set("Location", location)
 		fmt.Printf("Redirecting to %s ", location)
 		w.WriteHeader(303) // 302 has the same effect
@@ -58,5 +58,5 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	flag.Parse()
 	http.HandleFunc("/users/", corsWrapper(userHandler))
-	log.Fatal(http.ListenAndServe(fmt.Sprintf("localhost:%d", *port), nil))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf("apiserver.cors.com:%d", *port), nil))
 }

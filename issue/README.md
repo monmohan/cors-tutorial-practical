@@ -1,11 +1,12 @@
-## EDIT : This has been fixed and now both the buttons will show same behavior :)
-See [Chrome Bug Report] (https://bugs.chromium.org/p/chromium/issues/detail?id=580796)
-and https://github.com/whatwg/fetch/issues/204
+## Reproduce browsers failure to follow redirects in case of Pre-flighted CORS requests
 
-### Reproduce browsers failure to follow redirects in case of Pre-flighted CORS requests
+### UPDATE : This behavior has been fixed and now browsers do follow redirects in case of Pre-flighted CORS request
+* For details see [Chrome Bug Report](https://bugs.chromium.org/p/chromium/issues/detail?id=580796)
+and https://github.com/whatwg/fetch/issues/204
+* Hence in the example below, both buttons would show the same behavior
 
 # Running the repro servers
-* Download and install [golang[ (https://golang.org/dl/)
+* Download and install [golang](https://golang.org/dl/)
 * Clone the repo
 * Running the API and page server
     + Map couple of loopback interfaces to page and apiserver. For example here is my etc/hosts file

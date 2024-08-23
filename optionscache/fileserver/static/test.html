@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORS Requests with Dynamic Input Example</title>
+</head>
+<body>
+    <h1>CORS Requests with Dynamic Input Example</h1>
+    <button onclick="makeFirstRequest()">Make First CORS Request</button>
+    <div id="result1"></div>
+    <br><br>
+    <label for="idInput">Enter ID for second request:</label>
+    <input type="text" id="idInput" value="123">
+    <button onclick="makeSecondRequest()">Make Second CORS Request</button>
+    <div id="result2"></div>
+
+    <script>
+        function makeFirstRequest() {
+            fetch('http://localhost:8081/api/data?type=first', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result1').innerText = 'First Request: ' + JSON.stringify(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('result1').innerText = 'Error in First Request: ' + error.message;
+            });
+        }
+
+        function makeSecondRequest() {
+            const id = document.getElementById('idInput').value;
+            fetch(`http://localhost:8081/api/info?category=example&id=${encodeURIComponent(id)}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result2').innerText = 'Second Request: ' + JSON.stringify(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('result2').innerText = 'Error in Second Request: ' + error.message;
+            });
+        }
+    </script>
+</body>
+</html>

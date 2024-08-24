@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORS Header Testing</title>
+</head>
+<body>
+    <h1>CORS Header Testing with /api/data</h1>
+    <button onclick="runTests()">Run Tests</button>
+    <div id="results"></div>
+
+    <script>
+        function logResult(message) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML += message + '<br>';
+            console.log(message);
+        }
+
+        async function makeRequest(headers, queryParams = '') {
+            try {
+                const response = await fetch(`http://localhost:8081/api/data${queryParams}`, {
+                    method: 'GET',
+                    headers: headers
+                });
+                const data = await response.json();
+                logResult(`Response: ${JSON.stringify(data)}`);
+            } catch (error) {
+                logResult(`Error: ${error.message}`);
+            }
+        }
+
+        async function runTests() {
+            document.getElementById('results').innerHTML = '';
+            
+            logResult('Test 1: First request with Header 1');
+            await makeRequest({'X-Custom-Header-1': 'Value1'});
+            
+            logResult('Test 2: Second request with Header 1 (should use cached preflight)');
+            await makeRequest({'X-Custom-Header-1': 'Value1'});
+            
+            logResult('Test 3: Request with Header 2 (should trigger new preflight)');
+            await makeRequest({'X-Custom-Header-2': 'Value2'});
+            
+            logResult('Test 4: Request with Header 1 and different value (should use cached preflight)');
+            await makeRequest({'X-Custom-Header-1': 'DifferentValue'});
+            
+            logResult('Test 5: Request with both headers (should trigger new preflight)');
+            await makeRequest({'X-Custom-Header-1': 'Value1', 'X-Custom-Header-2': 'Value2'});
+            
+            logResult('Test 6: Repeat request with both headers (should use cached preflight)');
+            await makeRequest({'X-Custom-Header-1': 'Value1', 'X-Custom-Header-2': 'Value2'});
+            
+            logResult('Test 7: Request with query parameter (should use cached preflight)');
+            await makeRequest({'X-Custom-Header-1': 'Value1'}, '?type=test');
+            
+            logResult('Waiting 5 seconds for preflight cache to expire...');
+            await new Promise(resolve => setTimeout(resolve, 5000));
+            
+            logResult('Test 8: Request after cache expiration (should trigger new preflight)');
+            await makeRequest({'X-Custom-Header-1': 'Value1'});
+        }
+    </script>
+</body>
+</html>

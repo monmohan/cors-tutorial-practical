@@ -46,12 +46,11 @@ Content-Length: 19
 Content-Type: text/plain; charset=utf-8
 ```
 
-## Expected Behavior
+## Behavior
 
-1. I expected that in subsequent call to server in the next one hour from same browser (`Access-Control-Max-Age: 3600`), no OPTIONS call will be made
+1. Making a subsequent call to server in the next one hour from same browser (`Access-Control-Max-Age: 3600`), no OPTIONS call will be made if the query param name and value matches exactly
 
-
-2. However, changes in the following will ignore the cache and trigger a new OPTIONS call:
+2. Changes in the following will ignore the cache and trigger a new OPTIONS call:
    - URL query parameters (e.g., `/api/data?type=second`)
    - Use of different custom headers
 

@@ -35,7 +35,7 @@
 
         function makeSecondRequest() {
             const id = document.getElementById('idInput').value;
-            fetch(`http://localhost:8081/api/info?category=example&id=${encodeURIComponent(id)}`, {
+            fetch(`http://localhost:8081/api/data?type=${encodeURIComponent(id)}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

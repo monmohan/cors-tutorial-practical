@@ -5,50 +5,55 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
+	"time"
 )
 
-func enableCors(w *http.ResponseWriter) {
-	(*w).Header().Set("Access-Control-Allow-Origin", "http://localhost:8080/*")
+func enableCors(w *http.ResponseWriter, r *http.Request) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
 	(*w).Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-	(*w).Header().Set("Access-Control-Allow-Headers", "Content-Type")
-	(*w).Header().Set("Access-Control-Max-Age", "3600")
+	(*w).Header().Set("Access-Control-Allow-Headers", "Content-Type, X-Custom-Header-1, X-Custom-Header-2")
+	(*w).Header().Set("Access-Control-Max-Age", "5")
 
+	if r.Method == "OPTIONS" {
+		log.Printf("Preflight request received at %s", time.Now().Format(time.RFC3339))
+		log.Printf("Request URL: %s", r.URL.String())
+		log.Printf("Request Headers: %v", r.Header)
+		(*w).WriteHeader(http.StatusOK)
+		return
+	}
 }
 
 func handleData(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
+	enableCors(&w, r)
 
-	if r.Method == "OPTIONS" {
-		w.WriteHeader(http.StatusOK)
+	if r.Method != "GET" && r.Method != "POST" {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
+
+	log.Printf("Request received for /api/data at %s", time.Now().Format(time.RFC3339))
+	log.Printf("Request URL: %s", r.URL.String())
+	log.Printf("Request Headers: %v", r.Header)
 
 	dataType := r.URL.Query().Get("type")
-	data := map[string]string{"message": fmt.Sprintf("Hello from the CORS server! Data type: %s", dataType)}
-	json.NewEncoder(w).Encode(data)
-}
-
-func handleInfo(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
-
-	if r.Method == "OPTIONS" {
-		w.WriteHeader(http.StatusOK)
-		return
+	if dataType == "" {
+		dataType = "default"
 	}
 
-	category := r.URL.Query().Get("category")
-	id := r.URL.Query().Get("id")
 	data := map[string]string{
-		"message":  "Info from the CORS server!",
-		"category": category,
-		"id":       id,
+		"message":   fmt.Sprintf("Hello from the CORS server! Data type: %s", dataType),
+		"timestamp": strconv.FormatInt(time.Now().Unix(), 10),
+		"header1":   r.Header.Get("X-Custom-Header-1"),
+		"header2":   r.Header.Get("X-Custom-Header-2"),
 	}
+
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(data)
 }
 
 func main() {
 	http.HandleFunc("/api/data", handleData)
-	http.HandleFunc("/api/info", handleInfo)
 
 	fmt.Println("CORS Server is running on http://localhost:8081")
 	log.Fatal(http.ListenAndServe(":8081", nil))
